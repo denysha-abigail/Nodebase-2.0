@@ -44,7 +44,7 @@ function init() {
           viewAllEmployees();
           break;
         case "Add a department":
-         
+          addDepartment();
           break;
         case "Add a role":
          
@@ -89,4 +89,40 @@ function viewAllEmployees() {
     db.findEmployees().then(([data]) => {
         console.table(data)
     }).then(() => init())
+}
+
+function addDepartment() {
+  inquirer
+    .prompt([
+      //start questions
+      {
+        type: "input",
+        name: "addDepart",
+        message: "Enter department name",
+        validate: (departInput) => {
+          if (departInput) {
+            return true;
+          } else {
+            console.log("Please provide a department name");
+            return false;
+          }
+        },
+      },
+    ])
+    .then(function (res) {
+      const sql = `INSERT INTO department SET ?`;
+      const params = [res.addDepart];
+
+      connection.query(sql, params, (err, row) => {
+        if (err) {
+          res.status(400).json({ error: err.message });
+          return;
+        }
+        res.json({
+          message: "success",
+          data: row,
+        });
+      });
+      // console.log(res.addDepart);
+    });
 }
