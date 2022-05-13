@@ -2,29 +2,37 @@ USE employees;
 
 INSERT INTO department(name)
 VALUES 
-    ('Customer Service'),
-    ('Engineering'),
+    ('Human Resources'),
     ('Marketing'),
-    ('Finance');
+    ('Finance'),
+    ('Engineering');
 
 INSERT INTO role(title, salary, department_id)
 VALUES 
-    ('Customer Manager', 75000, 1),
-    ('Developer Manager', 90000, 2),
-    ('Marketing Manager', 100000, 3),
-    ('Accounting Manager', 120000, 4),
-    ('Customer Service Rep', 40000, 1),
-    ('Software Developer', 110000, 2),
-    ('Marketer', 90000, 3),
-    ('Accountant', 70000, 4);
+    ('HR Manager', 100000, 1),
+    ('Brand Marketing Manager', 75000, 2),
+    ('Financial Manager', 130000, 3),
+    ('Senior Software Engineer', 150000, 4),
+    ('Recruiter', 50000, 1),
+    ('Administrative Assistant', 45000, 1),
+    ('Copywriter', 55000, 2),
+    ('Marketing Associate', 50000, 2),
+    ('Financial Analyst', 80000, 3),
+    ('Accountant', 70000, 3),
+    ('Software Engineer', 90000, 4),
+    ('Junior Software Engineer', 60000, 4);
 
 INSERT INTO employee(first_name, last_name, role_id, manager_id) 
 VALUES  
-    ('Bethany', 'Christian', 1, NULL),
-    ('Chandler', 'Acevedo', 2, NULL),
-    ('Bob', 'Smith', 3, NULL),
-    ('Sally', 'Fields', 4, NULL),
-    ('Mariella', 'Lewis', 5, 1),
-    ('Lola', 'Morris', 6, 2),
-    ('Shelly', 'Dixon', 7, 3),
-    ('Yasir', 'Sargent', 8, 4);
+    ('Alexis', 'Burgees', 1, NULL),
+    ('Nathalie', 'Cooper', 2, NULL),
+    ('Nakamoto', 'Hikari', 3, NULL),
+    ('Adaline', 'Bowen', 4, NULL),
+    ('Theodore', 'Jenkins', 5, 1),
+    ('Mike', 'Nunez', 6, 1),
+    ('Nicolas', 'Gomez', 7, 2),
+    ('Antonio', 'Vargas', 8, 2),
+    ('Genesis', 'Rodriguez', 9, 3),
+    ('Xiang', 'Li', 10, 3),
+    ('Noah', 'Mendoza', 11, 4),
+    ('Wolf', 'Schmidt', 12, 4);
