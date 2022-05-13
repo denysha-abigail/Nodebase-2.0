@@ -108,11 +108,11 @@ function addDepartment() {
           "INSERT INTO department SET ? ",
           {
             name: res.name
-          
           },
           function(err) {
               if (err) throw err
               console.table(res);
+              console.log(`${res.name} successfully added!`);
               init();
           }
       )
