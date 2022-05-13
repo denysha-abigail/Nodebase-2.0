@@ -38,10 +38,10 @@ function init() {
           viewAllDepartments();
           break;
         case "View all roles":
-            viewAllRoles();
+          viewAllRoles();
           break;
         case "View all employees":
-         
+          viewAllEmployees();
           break;
         case "Add a department":
          
@@ -81,6 +81,12 @@ function viewAllDepartments() {
 
 function viewAllRoles() {
     db.findRoles().then(([data]) => {
+        console.table(data)
+    }).then(() => init())
+}
+
+function viewAllEmployees() {
+    db.findEmployees().then(([data]) => {
         console.table(data)
     }).then(() => init())
 }
