@@ -125,8 +125,8 @@ function addRole() {
       {
         type: 'list',
         name: 'department',
-        message: 'Select which Department the role belongs to',
-        choices: ['Human Resources', 'Marketing', 'Finance', 'Engineering'],
+        message: 'Select which Department the role belongs to (Human Resources - 1, Marketing - 2, Financing - 3, Engineering - 4)',
+        choices: ['1', '2', '3', '4'],
       },
     ])
     .then(function (res) {
@@ -135,16 +135,17 @@ function addRole() {
         {
           title: res.title,
           salary: res.salary,
-          department: res.department,
+          department_id: res.department
         },
         function (err) {
           if (err) throw err;
           console.table(res);
+          console.log(`${res.title} role successfully added!`);
           init();
         }
       );
     });
-}
+};
 
 // add an employee; allows user to enter first name, last name, role, and reporting manager to add to database
 function addEmployee() {
