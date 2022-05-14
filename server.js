@@ -115,17 +115,17 @@ function addRole() {
       {
         type: 'input',
         name: 'title',
-        message: 'Enter a role',
+        message: 'Please enter a role',
       },
       {
         type: 'input',
         name: 'salary',
-        message: 'Enter salary amount for the role',
+        message: 'Please enter salary amount for the role',
       },
       {
         type: 'list',
         name: 'department',
-        message: 'Select which Department the role belongs to (Human Resources - 1, Marketing - 2, Financing - 3, Engineering - 4)',
+        message: 'Please select which Department the role belongs to (Human Resources - 1, Marketing - 2, Financing - 3, Engineering - 4)',
         choices: ['1', '2', '3', '4'],
       },
     ])
@@ -154,37 +154,37 @@ function addEmployee() {
       {
         type: 'input',
         name: 'firstName',
-        message: 'Enter employee\s first name',
+        message: "Please enter employee\'s first name",
       },
       {
         type: 'input',
         name: 'lastName',
-        message: 'Enter employee\s last name',
+        message: "Please enter employee\'s last name",
       },
       {
         type: 'list',
         name: 'role',
-        message: 'Select a role for the employee',
+        message: 'Please select a role for the employee (Recruiter - 5, Administrative Assistant - 6, Copywriter - 7, Marketing Associate - 8, Financial Analyst - 9, Accountant - 10, Software Engineer - 11, Junior Software Engineer - 12)',
         choices: [
-          'Recruiter',
-          'Administrative Assistant',
-          'Copywriter',
-          'Marketing Associate',
-          'Financial Analyst',
-          'Accountant',
-          'Software Engineer',
-          'Junior Software Engineer'
+          '5',
+          '6',
+          '7',
+          '8',
+          '9',
+          '10',
+          '11',
+          '12'
         ],
       },
       {
         type: 'list',
         name: 'manager',
-        message: 'Select the employee\s manager',
+        message: "Please select the employee\'s manager (Alexis Burgees (Human Resources) - 1, Nathalie Cooper (Marketing) - 2, Nakamoto Hikari (Finance) - 3, Adaline Bowen (Engineering) - 4)",
         choices: [
-          'Alexis Burgees - HR',
-          'Nathalie Cooper - Marketing',
-          'Nakamoto Hikari - Finance',
-          'Adaline Bowen - Engineering'
+          '1',
+          '2',
+          '3',
+          '4'
         ],
       },
     ])
@@ -208,64 +208,97 @@ function addEmployee() {
 
 // update employee role; allows user to select an employee and update their existing role with a new role and add to database
 function updateEmployee() {
-  connection.query(
-    'SELECT employee.last_name, role.title FROM employee JOIN role ON employee.role_id = role.id;',
-    function (err, res) {
-      // console.log(res)
-      if (err) throw err;
-      console.log(res);
       inquirer
         .prompt([
           {
-            name: 'lastName',
-            type: 'list',
-            choices: function () {
-              var lastName = [];
-              for (var i = 0; i < res.length; i++) {
-                lastName.push(res[i].last_name);
-              }
-              return lastName;
-            },
-            message: 'What is the employee\s last name?',
+            type: "input",
+            name: "employeeId",
+            message: "Please enter the employee\'s ID number? ",
           },
           {
-            name: 'role',
             type: 'list',
-            message: 'What is the employee\s new title?',
-            choices: selectRole(),
+            name: 'currentRole',
+            message: "Please select the employee\'s current role (HR Manager - 1, Brand Marketing Manager - 2, Financial Manager - 3, Senior Software Engineer - 4, Recruiter - 5, Administrative Assistant - 6, Copywriter - 7, Marketing Associate - 8, Financial Analyst - 9, Accountant - 10, Software Engineer - 11, Junior Software Engineer - 12)",
+            choices: [
+              '1',
+              '2',
+              '3',
+              '4',
+              '5',
+              '6',
+              '7',
+              '8',
+              '9',
+              '10',
+              '11',
+              '12'
+            ],
+          },
+          {
+            type: 'list',
+            name: 'currentManager',
+            message: "Please select the employee\'s current manager (Alexis Burgees (Human Resources) - 1, Nathalie Cooper (Marketing) - 2, Nakamoto Hikari (Finance) - 3, Adaline Bowen (Engineering) - 4, If employee is currently a Manager - NULL)",
+            choices: [
+              '1',
+              '2',
+              '3',
+              '4',
+              'NULL'
+            ],
+          },
+          {
+            type: 'list',
+            name: 'newRole',
+            message: "Please select the employee\'s new role (HR Manager - 1, Brand Marketing Manager - 2, Financial Manager - 3, Senior Software Engineer - 4, Recruiter - 5, Administrative Assistant - 6, Copywriter - 7, Marketing Associate - 8, Financial Analyst - 9, Accountant - 10, Software Engineer - 11, Junior Software Engineer - 12)",
+            choices: [
+              '1',
+              '2',
+              '3',
+              '4',
+              '5',
+              '6',
+              '7',
+              '8',
+              '9',
+              '10',
+              '11',
+              '12'
+            ],
+          },
+          {
+            type: 'list',
+            name: 'newManager',
+            message: "Please select the employee\'s new manager (Alexis Burgees (Human Resources) - 1, Nathalie Cooper (Marketing) - 2, Nakamoto Hikari (Finance) - 3, Adaline Bowen (Engineering) - 4, If employee got promoted to a Manager position - NULL)",
+            choices: [
+              '1',
+              '2',
+              '3',
+              '4',
+              'NULL'
+            ],
           },
         ])
         .then(function (val) {
-          var roleId = selectRole().indexOf(val.role) + 1;
+          console.log(val);
           connection.query(
-            'UPDATE employee SET WHERE ?',
+            'UPDATE employee SET role_id = ?, manager_id = ? WHERE role_id = ? AND manager_id = ? AND id = ?;',
             {
-              last_name: val.lastName,
+              role_id: val.newRole,
+              manager_id: val.newManager
             },
             {
-              role_id: roleId,
+              role_id: val.currentRole,
+              manager_id: val.currentManager,
+              id: val.employeeId
             },
             function (err) {
               if (err) throw err;
               console.table(val);
               init();
             }
-          );
-        });
-    }
-  );
+        );
+    });
 }
 
-
-// Select Role title for addEmployee() prompt
-var roleArr = [];
-function selectRole() {
-  connection.query('SELECT * FROM role', function(err, res) {
-    if (err) throw err
-    for (var i = 0; i < res.length; i++) {
-      roleArr.push(res[i].title);
-    }
-
-  })
-  return roleArr;
-}
+// updateEmployee()
+// 'UPDATE employee SET role_id = ?, manager_id = ? WHERE role_id = ? AND manager_id = ? AND id = ?;',
