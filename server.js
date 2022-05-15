@@ -168,9 +168,15 @@ function addRole() {
 // add an employee; allows user to enter first name, last name, role, and reporting manager to add to database
 function addEmployee() {
   connection.query(
-    'SELECT employee.*, role.title AS role_title FROM employee INNER JOIN role on role.id = employee.role_id;',
+    'SELECT role.id AS role_id, role.title AS role_title FROM role;',
     function (err, res) {
-    console.table(res);
+      console.log('ROLE TABLE:');
+      console.table(res);
+      connection.query(
+        "SELECT employee.id AS employee_id, CONCAT(employee.first_name, ' ' ,employee.last_name) AS reporting__manager, employee.role_id FROM employee WHERE manager_id IS NULL;",
+        function (err, res) {
+          console.log('CURRENT MANAGERS TABLE:');
+          console.table(res);
   inquirer
     .prompt([
       {
@@ -202,12 +208,12 @@ function addEmployee() {
       {
         type: 'input',
         name: 'role',
-        message: "Please choose a role_id number from the above table that corresponds to the new employee\'s role title (i.e. If new employee\'s role is HR Manager, write 1):",
+        message: "Please choose a role_id number from the above ROLE TABLE that corresponds to the employee\'s new role title (i.e. If employee\'s new role is HR Manager, write 1):",
         validate: (roleInput) => {
           if (roleInput) {
             return true;
           } else {
-            console.log("Please enter a role_id number from the above table!");
+            console.log("Please enter a role_id number from the above ROLE TABLE!");
             return false;
           }
         }
@@ -215,12 +221,12 @@ function addEmployee() {
       {
         type: 'input',
         name: 'manager',
-        message: "Please enter the reporting manager\'s ID number (If new employee\'s role is a Manager position write null):",
+        message: "Please use the above CURRENT MANAGERS TABLE as a reference to enter the new manager\'s employee_id number for the employee you are updating (If employee\'s new role is now a Manager position, please write: null):",
         validate: (managerInput) => {
           if (managerInput) {
             return true;
           } else {
-            console.log("Please enter the reporting manager\'s ID number!");
+            console.log("Please enter the new manager\'s employee_id number!");
             return false;
           }
         }
@@ -242,6 +248,7 @@ function addEmployee() {
           init();
         }
       );
+    });
   });
 })
 }
@@ -249,9 +256,15 @@ function addEmployee() {
 // update employee role & manager; allows user to enter an employee id and update that employee's existing role and manager with their new role and manager before adding to database
 function updateEmployee() {
     connection.query(
-    'SELECT employee.*, role.title AS role_title FROM employee INNER JOIN role on role.id = employee.role_id;',
+    'SELECT role.id AS role_id, role.title AS role_title FROM role;',
     function (err, res) {
+      console.log('ROLE TABLE:');
       console.table(res);
+      connection.query(
+        "SELECT employee.id AS employee_id, CONCAT(employee.first_name, ' ' ,employee.last_name) AS reporting__manager, employee.role_id FROM employee WHERE manager_id IS NULL;",
+        function (err, res) {
+          console.log('CURRENT MANAGERS TABLE:');
+          console.table(res);
       inquirer
         .prompt([
           {
@@ -270,12 +283,12 @@ function updateEmployee() {
           {
             type: 'input',
             name: 'newRole',
-            message: "Please choose a role_id number from the above table that corresponds to the employee\'s new role title (i.e. If employee\'s new role is HR Manager, write 1):", 
+            message: "Please choose a role_id number from the above ROLE TABLE that corresponds to the employee\'s new role title (i.e. If employee\'s new role is HR Manager, write 1):", 
             validate: (newRoleInput) => {
               if (newRoleInput) {
                 return true;
               } else {
-                console.log("Please enter a role_id number from the above table!");
+                console.log("Please enter a role_id number from the above ROLE TABLE!");
                 return false;
               }
             }
@@ -283,12 +296,12 @@ function updateEmployee() {
           {
             type: 'input',
             name: 'newManager',
-            message: "Please enter the new manager\'s ID number (If employee\'s new role is now a Manager position write null):",
+            message: "Please use the above CURRENT MANAGERS TABLE as a reference to enter the new manager\'s employee_id number for the employee you are updating (If employee\'s new role is now a Manager position, please write: null):",
             validate: (newManagerInput) => {
               if (newManagerInput) {
                 return true;
               } else {
-                console.log("Please enter the new manager\'s ID number!");
+                console.log("Please enter the new manager\'s employee_id number!");
                 return false;
               }
             }
@@ -306,6 +319,7 @@ function updateEmployee() {
             }
           );
       });
+        });
   });
 }
 
@@ -313,7 +327,7 @@ function updateManager() {
   connection.query(
     'SELECT * FROM employee;',
     function (err, res) {
-      console.log(res);
+      console.table(res);
       inquirer
         .prompt([
           {
