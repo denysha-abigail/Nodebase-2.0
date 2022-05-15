@@ -170,20 +170,25 @@ function addRole() {
             }
           },
         ])
-        .then(function (res) {
+        .then(function (val) {
           var query = connection.query(
             'INSERT INTO role SET ? ',
             {
-              title: res.title,
-              salary: res.salary,
-              department_id: res.department
+              title: val.title,
+              salary: val.salary,
+              department_id: val.department
             },
             function (err) {
               if (err) throw err;
-              console.table(res);
-              console.log(`${res.title} role successfully added!`);
+              console.log(`${val.title} role successfully added!`);
+              connection.query(
+                "SELECT role.id, role.title AS role_title, department.name as department_name, role.salary FROM role left join department on role.department_id = department.id;",
+                function (err, res) {
+                  console.log(`NOW VIEWING ALL ROLES WITH ${val.title} INCLUDED:`);
+                  console.table(res);
               init();
             }
+          )}
           );
         });
     });
