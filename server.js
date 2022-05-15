@@ -276,9 +276,9 @@ function addEmployee() {
 // update employee role & manager; allows user to enter an employee id and update that employee's existing role and manager with their new role and manager before adding to database
 function updateEmployee() {
   connection.query(
-    "SELECT employee.id, employee.first_name, employee.last_name, role.title AS role_title, department.name AS department_name, CONCAT(e.first_name, ' ' ,e.last_name) AS reporting_manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id WHERE e.id IS NULL ORDER BY id;",
+    "SELECT employee.id, employee.first_name, employee.last_name, role.title AS role_title, department.name AS department_name, CONCAT(e.first_name, ' ' ,e.last_name) AS reporting_manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id ORDER BY id;",
     function (err, res) {
-      console.log('CURRENT MANAGERS TABLE:');
+      console.log('CURRENT EMPLOYEES TABLE:');
       console.table(res);
       connection.query(
         'SELECT role.id AS role_id, role.title AS role_title FROM role;',
@@ -290,7 +290,7 @@ function updateEmployee() {
               {
                 type: "input",
                 name: "employeeId",
-                message: "Please enter the employee\'s ID number:",
+                message: "Please use the above CURRENT EMPLOYEES TABLE as a reference to enter the ID number of the employee you are updating (If employee\'s new role is now a Manager position, please write: null):",
                 validate: (idInput) => {
                   if (idInput) {
                     return true;
@@ -316,12 +316,12 @@ function updateEmployee() {
               {
                 type: 'input',
                 name: 'newManager',
-                message: "Please use the above CURRENT MANAGERS TABLE as a reference to enter the new manager\'s employee_id number for the employee you are updating (If employee\'s new role is now a Manager position, please write: null):",
+                message: "Please use the above CURRENT EMPLOYEES TABLE as a reference to enter the new manager\'s ID number for the employee you are updating (If employee\'s new role is now a Manager position, please write: null):",
                 validate: (newManagerInput) => {
                   if (newManagerInput) {
                     return true;
                   } else {
-                    console.log("Please enter the new manager\'s employee_id number!");
+                    console.log("Please enter the new manager\'s ID number!");
                     return false;
                   }
                 }
@@ -396,6 +396,7 @@ function updateManager() {
 }
 
 // * bonus - allows user to view employees by manager *
+// view all employees by manager; allows user to enter the ID of a manager in order to view all employees under their supervision
 function viewByManager() {
   connection.query(
     "SELECT employee.id, employee.first_name, employee.last_name, role.title AS role_title, department.name AS department_name, CONCAT(e.first_name, ' ' ,e.last_name) AS reporting_manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id WHERE e.id IS NULL ORDER BY id;",
