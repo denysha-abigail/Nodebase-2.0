@@ -339,6 +339,7 @@ function updateEmployee() {
     });
 }
 
+// update a manager; allows user to enter an employee id and update that employee's existing manager with their new manager before adding to database
 function updateManager() {
   connection.query(
     "SELECT employee.id, employee.first_name, employee.last_name, role.title AS role_title, department.name AS department_name, CONCAT(e.first_name, ' ' ,e.last_name) AS reporting_manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id WHERE e.id IS NULL ORDER BY id;",
@@ -377,7 +378,7 @@ function updateManager() {
         .then(function (val) {
           connection.query(
             'UPDATE employee SET manager_id = ? WHERE id = ?;',
-            [val.newManagerInput, val.idInput],
+            [JSON.parse(val.newManager), val.employeeId],
             function (err) {
               if (err) throw err;
               console.table(val);
