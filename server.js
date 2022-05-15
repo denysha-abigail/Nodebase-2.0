@@ -19,6 +19,7 @@ function init() {
           'View all roles',
           'View all employees',
           'View employees by manager',
+          'View employees by department',
           'Add a department',
           'Add a role',
           'Add an employee',
@@ -42,6 +43,9 @@ function init() {
           break;
         case 'View employees by manager':
           viewByManager();
+          break;
+        case 'View employees by department':
+          viewByDepartment();
           break;
         case 'Add a department':
           addDepartment();
@@ -435,8 +439,43 @@ function viewByManager() {
 }
 
 // * bonus - allows user to view employees by department *
-
-
+// view all employees by department; allows user to enter the department ID in order to view all employees who work for that department
+function viewByDepartment() {
+  connection.query(
+    "SELECT department.id AS department_id, department.name as department_name FROM department ORDER BY id;",
+    function (err, res) {
+      console.log('DEPARTMENTS TABLE:');
+      console.table(res);
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "viewByDepartment",
+            message: "'Please choose a department_id number from the above DEPARTMENTS TABLE to view all employees who work for that department (i.e. Human Resources - 1):'",
+            validate: (departmentInput) => {
+              if (departmentInput) {
+                return true;
+              } else {
+                console.log("Please enter a department_id number!");
+                return false;
+              }
+            }
+          },
+        ])
+        .then(function (val) {
+          connection.query(
+            'SELECT employee.id, employee.first_name, employee.last_name, role.title AS role_title, department.name AS department_name FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id WHERE department.id = ?;',
+            [JSON.parse(val.viewByDepartment)],
+            function (err, res) {
+              if (err) throw err;
+              console.table(res);
+              console.log(`You selected to view all employees under the Department with an ID of ${val.viewByDepartment}!`);
+              init();
+            }
+          );
+        });
+    })
+}
 
 // * bonus - allows user to delete departments, roles, and employees *
 
