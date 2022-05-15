@@ -256,21 +256,26 @@ function addEmployee() {
                 }
               },
             ])
-            .then(function (res) {
+            .then(function (val) {
               var query = connection.query(
                 'INSERT INTO employee SET ? ',
                 {
-                  first_name: res.firstName,
-                  last_name: res.lastName,
-                  role_id: res.role,
-                  manager_id: JSON.parse(res.manager),
+                  first_name: val.firstName,
+                  last_name: val.lastName,
+                  role_id: val.role,
+                  manager_id: JSON.parse(val.manager),
                 },
                 function (err) {
                   if (err) throw err;
-                  console.table(res);
-                  console.log(`${res.firstName} ${res.lastName} successfully added!`)
+                  console.log(`${val.firstName} ${val.lastName} successfully added!`);
+                  connection.query(
+                    "SELECT employee.id, employee.first_name, employee.last_name, role.title AS role_title, department.name AS department_name, CONCAT(e.first_name, ' ' ,e.last_name) AS reporting_manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id ORDER BY id;",
+                    function (err, res) {
+                      console.log(`NOW VIEWING ALL EMPLOYEES WITH ${val.firstName} ${val.lastName} INCLUDED:`);
+                      console.table(res);
                   init();
                 }
+                  )}
               );
             });
         });
@@ -337,12 +342,11 @@ function updateEmployee() {
                 [val.newRole, JSON.parse(val.newManager), val.employeeId],
                 function (err) {
                   if (err) throw err;
-                  console.table(val);
                   console.log(`Employee with ID of ${val.employeeId} successfully updated!`);
                   connection.query(
                     `SELECT employee.id, employee.first_name, employee.last_name, role.title AS updated_role, CONCAT(e.first_name, ' ' ,e.last_name) AS updated_manager FROM employee INNER JOIN role on role.id = employee.role_id left join employee e on employee.manager_id = e.id WHERE employee.id = ${val.employeeId};`,
                     function (err, res) {
-                      console.log(`VIEWING EMPLOYEE WITH ID OF ${val.employeeId} AFTER SUCCESSFUL ROLE AND MANAGER UPDATE:`);
+                      console.log(`NOW VIEWING EMPLOYEE WITH ID OF ${val.employeeId} AFTER SUCCESSFUL ROLE AND MANAGER UPDATE:`);
                       console.table(res);
                   init();
                 }
@@ -396,12 +400,11 @@ function updateManager() {
             [JSON.parse(val.newManager), val.employeeId],
             function (err) {
               if (err) throw err;
-              console.table(val);
               console.log(`Manager for employee with ID of ${val.employeeId} successfully updated!`);
                connection.query(
                 `SELECT employee.id, employee.first_name, employee.last_name, CONCAT(e.first_name, ' ' ,e.last_name) AS updated_manager FROM employee INNER JOIN role on role.id = employee.role_id left join employee e on employee.manager_id = e.id WHERE employee.id = ${val.employeeId};`,
                 function (err, res) {
-                  console.log(`VIEWING EMPLOYEE WITH ID OF ${val.employeeId} AFTER SUCCESSFUL MANAGER UPDATE:`);
+                  console.log(`NOW VIEWING EMPLOYEE WITH ID OF ${val.employeeId} AFTER SUCCESSFUL MANAGER UPDATE:`);
                   console.table(res);
               init();
             }
