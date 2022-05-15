@@ -18,6 +18,7 @@ function init() {
           'View all departments',
           'View all roles',
           'View all employees',
+          'View employees by manager',
           'Add a department',
           'Add a role',
           'Add an employee',
@@ -38,6 +39,9 @@ function init() {
           break;
         case 'View all employees':
           viewAllEmployees();
+          break;
+        case 'View employees by manager':
+          viewByManager();
           break;
         case 'Add a department':
           addDepartment();
@@ -339,6 +343,7 @@ function updateEmployee() {
     });
 }
 
+// * bonus - allows user to update employee managers *
 // update a manager; allows user to enter an employee id and update that employee's existing manager with their new manager before adding to database
 function updateManager() {
   connection.query(
@@ -389,3 +394,55 @@ function updateManager() {
         });
     });
 }
+
+// * bonus - allows user to view employees by manager *
+function viewByManager() {
+  connection.query(
+    "SELECT employee.id, employee.first_name, employee.last_name, role.title AS role_title, department.name AS department_name, CONCAT(e.first_name, ' ' ,e.last_name) AS reporting_manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id WHERE e.id IS NULL ORDER BY id;",
+    function (err, res) {
+      console.log('CURRENT MANAGERS TABLE:');
+      console.table(res);
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "viewByManager",
+            message: "Please use the above CURRENT MANAGERS TABLE as a reference to enter the manager\'s ID number (i.e. If you want to view all employees under Adaline Bowen (id = 4), write 4):",
+            validate: (managerInput) => {
+              if (managerInput) {
+                return true;
+              } else {
+                console.log("Please enter the manager\'s ID number!");
+                return false;
+              }
+            }
+          },
+        ])
+        .then(function (val) {
+          connection.query(
+            'SELECT * FROM employee WHERE manager_id = ?;',
+            [JSON.parse(val.viewByManager)],
+            function (err) {
+              if (err) throw err;
+              console.table(val);
+              console.log(`You selected to view all employees under the Manager with an ID of ${val.viewByManager}!`);
+              init();
+            }
+          );
+        });
+    })
+}
+
+// * bonus - allows user to view employees by department *
+
+
+
+// * bonus - allows user to delete departments, roles, and employees *
+
+
+
+// * bonus - allows user to view the total utilized budget of a department — in other words, the combined salaries of all employees in that department *
+
+
+
+
