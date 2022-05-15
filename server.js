@@ -1,10 +1,9 @@
 const inquirer = require('inquirer');
 require('console.table');
-// automatically goes to index file
 const db = require('./db');
 const connection = require('./db/connection')
 
-// inquirer questions go here
+// initialization function
 init();
 
 function init() {
@@ -14,7 +13,7 @@ function init() {
       {
         type: 'list',
         name: 'options',
-        message: 'Which would you like to view?',
+        message: 'Which option would you like to execute?',
         choices: [
           'View all departments',
           'View all roles',
@@ -236,6 +235,7 @@ function addEmployee() {
         function (err) {
           if (err) throw err;
           console.table(res);
+          console.log(`${res.firstName} ${res.lastName} successfully added!`)
           init();
         }
       );
@@ -285,7 +285,7 @@ function updateEmployee() {
           {
             type: 'list',
             name: 'newManager',
-            message: "Please select the employee\'s new manager (Alexis Burgees (Human Resources) - 1, Nathalie Cooper (Marketing) - 2, Nakamoto Hikari (Finance) - 3, Adaline Bowen (Engineering) - 4, If employee got promoted to a Manager position - null)",
+            message: "Please select the employee\'s new manager (Alexis Burgees (Human Resources) - 1, Nathalie Cooper (Marketing) - 2, Nakamoto Hikari (Finance) - 3, Adaline Bowen (Engineering) - 4, If employee\'s new role is now a Manager position - null)",
             choices: [
               '1',
               '2',
@@ -296,13 +296,13 @@ function updateEmployee() {
           },
         ])
         .then(function (val) {
-          console.log(val)
           connection.query(
             'UPDATE employee SET role_id = ?, manager_id = ? WHERE id = ?;',
             [val.newRole, JSON.parse(val.newManager),val.employeeId],
             function (err) {
               if (err) throw err;
               console.table(val);
+              console.log(`Employee with ID of ${val.employeeId} successfully updated!`);
               init();
             }
           );
