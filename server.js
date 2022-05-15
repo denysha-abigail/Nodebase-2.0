@@ -105,18 +105,23 @@ function addDepartment() {
         }
       }
     }
-  ]).then(function (res) {
+  ]).then(function (val) {
     var query = connection.query(
       'INSERT INTO department SET ? ',
       {
-        name: res.name
+        name: val.name
       },
       function (err) {
         if (err) throw err
-        console.table(res);
-        console.log(`${res.name} successfully added!`);
+        console.log(`${val.name} successfully added!`);
+        connection.query(
+          "SELECT * FROM department;",
+          function (err, res) {
+            console.log(`NOW VIEWING ALL DEPARTMENTS WITH ${val.name} INCLUDED:`);
+            console.table(res);
         init();
       }
+        )}
     )
   })
 };
