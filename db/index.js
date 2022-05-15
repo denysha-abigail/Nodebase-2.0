@@ -6,7 +6,7 @@ class Data {
     }
 
     findDepartments(){
-        return this.connection.promise().query('SELECT department.id, department.name as department_name FROM department ORDER BY id;')
+        return this.connection.promise().query('SELECT department.id AS department_id, department.name as department_name FROM department ORDER BY id;')
     }
 
     findRoles(){

@@ -112,6 +112,11 @@ function addDepartment() {
 
 // add role; allows user to enter name, salary, and name of department to add to database
 function addRole() {
+    connection.query(
+      'SELECT department.id AS department_id, department.name as department_name FROM department ORDER BY id;',
+      function (err, res) {
+        console.log('DEPARTMENTS TABLE:');
+        console.table(res);
   inquirer
     .prompt([
       {
@@ -141,10 +146,17 @@ function addRole() {
         }
       },
       {
-        type: 'list',
+        type: 'input',
         name: 'department',
-        message: 'Please select which Department the role belongs to (Human Resources - 1, Marketing - 2, Financing - 3, Engineering - 4)',
-        choices: ['1', '2', '3', '4'],
+        message: 'Please choose a department_id number from the above DEPARTMENTS TABLE that corresponds to the department the new role title belongs to (i.e. Human Resources - 1):',
+        validate: (departmentInput) => {
+          if (departmentInput) {
+            return true;
+          } else {
+            console.log('Please enter a department_id number!');
+            return false;
+          }
+        }
       },
     ])
     .then(function (res) {
@@ -163,19 +175,20 @@ function addRole() {
         }
       );
     });
+  });
 };
 
 // add an employee; allows user to enter first name, last name, role, and reporting manager to add to database
 function addEmployee() {
   connection.query(
-    'SELECT role.id AS role_id, role.title AS role_title FROM role;',
+    "SELECT employee.id AS employee_id, CONCAT(employee.first_name, ' ' ,employee.last_name) AS reporting__manager, employee.role_id FROM employee WHERE manager_id IS NULL;",
     function (err, res) {
-      console.log('ROLE TABLE:');
+      console.log('CURRENT MANAGERS TABLE:');
       console.table(res);
       connection.query(
-        "SELECT employee.id AS employee_id, CONCAT(employee.first_name, ' ' ,employee.last_name) AS reporting__manager, employee.role_id FROM employee WHERE manager_id IS NULL;",
+        'SELECT role.id AS role_id, role.title AS role_title FROM role;',
         function (err, res) {
-          console.log('CURRENT MANAGERS TABLE:');
+          console.log('ROLE TABLE:');
           console.table(res);
   inquirer
     .prompt([
@@ -256,14 +269,14 @@ function addEmployee() {
 // update employee role & manager; allows user to enter an employee id and update that employee's existing role and manager with their new role and manager before adding to database
 function updateEmployee() {
     connection.query(
-    'SELECT role.id AS role_id, role.title AS role_title FROM role;',
+    "SELECT employee.id AS employee_id, CONCAT(employee.first_name, ' ' ,employee.last_name) AS reporting__manager, employee.role_id FROM employee WHERE manager_id IS NULL;",
     function (err, res) {
-      console.log('ROLE TABLE:');
+      console.log('CURRENT MANAGERS TABLE:');
       console.table(res);
       connection.query(
-        "SELECT employee.id AS employee_id, CONCAT(employee.first_name, ' ' ,employee.last_name) AS reporting__manager, employee.role_id FROM employee WHERE manager_id IS NULL;",
+        'SELECT role.id AS role_id, role.title AS role_title FROM role;',
         function (err, res) {
-          console.log('CURRENT MANAGERS TABLE:');
+          console.log('ROLE TABLE:');
           console.table(res);
       inquirer
         .prompt([
@@ -323,51 +336,51 @@ function updateEmployee() {
   });
 }
 
-function updateManager() {
-  connection.query(
-    'SELECT * FROM employee;',
-    function (err, res) {
-      console.table(res);
-      inquirer
-        .prompt([
-          {
-            type: "input",
-            name: "employeeId",
-            message: "Please enter the employee\'s ID number:",
-            validate: (employeeIdInput) => {
-              if (employeeIdInput) {
-                return true;
-              } else {
-                console.log("Please enter the employee\'s ID number!");
-                return false;
-              }
-            }
-          },
-          {
-            type: "input",
-            name: "managerId",
-            message: "Please enter the new manager\'s ID number:",
-            validate: (managerIdInput) => {
-              if (managerIdInput) {
-                return true;
-              } else {
-                console.log("Please enter the new managers\'s ID number!");
-                return false;
-              }
-            }
-          },
-        ])
-        .then(function (ans) {
-          connection.query(
-            'UPDATE employee SET manager_id = ? WHERE id = ?;',
-            [ans.managerIdInput, ans.employeeIdInput],
-            function (err) {
-              if (err) throw err;
-              console.table(ans);
-              console.log(`Employee manager successfully updated!`);
-              init();
-            }
-          );
-      });
-    });
-}
+// function updateManager() {
+//   connection.query(
+//     'SELECT * FROM employee;',
+//     function (err, res) {
+//       console.table(res);
+//       inquirer
+//         .prompt([
+//           {
+//             type: "input",
+//             name: "employeeId",
+//             message: "Please enter the employee\'s ID number:",
+//             validate: (employeeIdInput) => {
+//               if (employeeIdInput) {
+//                 return true;
+//               } else {
+//                 console.log("Please enter the employee\'s ID number!");
+//                 return false;
+//               }
+//             }
+//           },
+//           {
+//             type: "input",
+//             name: "managerId",
+//             message: "Please enter the new manager\'s ID number:",
+//             validate: (managerIdInput) => {
+//               if (managerIdInput) {
+//                 return true;
+//               } else {
+//                 console.log("Please enter the new managers\'s ID number!");
+//                 return false;
+//               }
+//             }
+//           },
+//         ])
+//         .then(function (ans) {
+//           connection.query(
+//             'UPDATE employee SET manager_id = ? WHERE id = ?;',
+//             [ans.managerIdInput, ans.employeeIdInput],
+//             function (err) {
+//               if (err) throw err;
+//               console.table(ans);
+//               console.log(`Employee manager successfully updated!`);
+//               init();
+//             }
+//           );
+//       });
+//     });
+// }
