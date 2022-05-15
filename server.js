@@ -339,8 +339,14 @@ function updateEmployee() {
                   if (err) throw err;
                   console.table(val);
                   console.log(`Employee with ID of ${val.employeeId} successfully updated!`);
+                  connection.query(
+                    `SELECT employee.id, employee.first_name, employee.last_name, role.title AS updated_role, CONCAT(e.first_name, ' ' ,e.last_name) AS updated_manager FROM employee INNER JOIN role on role.id = employee.role_id left join employee e on employee.manager_id = e.id WHERE employee.id = ${val.employeeId};`,
+                    function (err, res) {
+                      console.log(`VIEWING EMPLOYEE WITH ID OF ${val.employeeId} AFTER SUCCESSFUL ROLE AND MANAGER UPDATE:`);
+                      console.table(res);
                   init();
                 }
+                  )}
               );
             });
         });
