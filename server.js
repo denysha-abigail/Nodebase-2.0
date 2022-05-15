@@ -422,9 +422,9 @@ function viewByManager() {
           connection.query(
             'SELECT * FROM employee WHERE manager_id = ?;',
             [JSON.parse(val.viewByManager)],
-            function (err) {
+            function (err, res) {
               if (err) throw err;
-              console.table(val);
+              console.table(res);
               console.log(`You selected to view all employees under the Manager with an ID of ${val.viewByManager}!`);
               init();
             }
