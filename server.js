@@ -27,7 +27,6 @@ function init() {
         ],
       },
     ])
-
     .then(function (startAnswer) {
       switch (startAnswer.options) {
         case 'View all departments':
@@ -120,7 +119,7 @@ function addRole() {
           if (roleInput) {
             return true;
           } else {
-            console.log('Please provide a role title!');
+            console.log('Please enter a role title!');
             return false;
           }
         }
@@ -128,12 +127,12 @@ function addRole() {
       {
         type: 'input',
         name: 'salary',
-        message: 'Please enter salary amount for the role:',
+        message: 'Please enter a salary amount for the role:',
         validate: (salaryInput) => {
           if (salaryInput) {
             return true;
           } else {
-            console.log('Please provide a salary amount!');
+            console.log('Please enter a salary amount!');
             return false;
           }
         }
@@ -170,12 +169,12 @@ function addEmployee() {
       {
         type: 'input',
         name: 'firstName',
-        message: "Please enter employee\'s first name",
+        message: "Please enter the employee\'s first name:",
         validate: (firstNameInput) => {
           if (firstNameInput) {
             return true;
           } else {
-            console.log("Please provide the employee\'s first name!");
+            console.log("Please enter the employee\'s first name!");
             return false;
           }
         }
@@ -183,12 +182,12 @@ function addEmployee() {
       {
         type: 'input',
         name: 'lastName',
-        message: "Please enter employee\'s last name",
+        message: "Please enter the employee\'s last name:",
         validate: (lastNameInput) => {
           if (lastNameInput) {
             return true;
           } else {
-            console.log("Please provide the employee\'s last name!");
+            console.log("Please enter the employee\'s last name!");
             return false;
           }
         }
@@ -226,8 +225,6 @@ function addEmployee() {
       },
     ])
     .then(function (res) {
-      console.log(res)
-      console.log(res.manager)
       var query = connection.query(
         'INSERT INTO employee SET ? ',
         {
@@ -247,12 +244,16 @@ function addEmployee() {
 
 // update employee role; allows user to select an employee and update their existing role with a new role and add to database
 function updateEmployee() {
+    connection.query(
+    'SELECT * FROM employee;',
+    function (err, res) {
+      console.log(res);
       inquirer
         .prompt([
           {
             type: "input",
             name: "employeeId",
-            message: "Please enter the employee\'s ID number? ",
+            message: "Please enter the employee\'s ID number:",
             validate: (idInput) => {
               if (idInput) {
                 return true;
@@ -261,37 +262,6 @@ function updateEmployee() {
                 return false;
               }
             }
-          },
-          {
-            type: 'list',
-            name: 'currentRole',
-            message: "Please select the employee\'s current role (HR Manager - 1, Brand Marketing Manager - 2, Financial Manager - 3, Senior Software Engineer - 4, Recruiter - 5, Administrative Assistant - 6, Copywriter - 7, Marketing Associate - 8, Financial Analyst - 9, Accountant - 10, Software Engineer - 11, Junior Software Engineer - 12)",
-            choices: [
-              '1',
-              '2',
-              '3',
-              '4',
-              '5',
-              '6',
-              '7',
-              '8',
-              '9',
-              '10',
-              '11',
-              '12'
-            ],
-          },
-          {
-            type: 'list',
-            name: 'currentManager',
-            message: "Please select the employee\'s current manager (Alexis Burgees (Human Resources) - 1, Nathalie Cooper (Marketing) - 2, Nakamoto Hikari (Finance) - 3, Adaline Bowen (Engineering) - 4, If employee is currently a Manager - null)",
-            choices: [
-              '1',
-              '2',
-              '3',
-              '4',
-              'null'
-            ],
           },
           {
             type: 'list',
@@ -327,26 +297,15 @@ function updateEmployee() {
         ])
         .then(function (val) {
           console.log(val)
-          console.log(val.newManager)
           connection.query(
-            'UPDATE employee SET role_id = ?, manager_id = ? WHERE role_id = ? AND manager_id = ? AND id = ?;',
-            {
-              role_id: val.newRole,
-              manager_id: JSON.parse(val.newManager)
-            },
-            {
-              role_id: val.currentRole,
-              manager_id: JSON.parse(val.currentManager),
-              id: val.employeeId
-            },
+            'UPDATE employee SET role_id = ?, manager_id = ? WHERE id = ?;',
+            [val.newRole, JSON.parse(val.newManager),val.employeeId],
             function (err) {
               if (err) throw err;
               console.table(val);
               init();
             }
-        );
-    });
+          );
+      });
+  });
 }
-
-// updateEmployee()
-// 'UPDATE employee SET role_id = ?, manager_id = ? WHERE role_id = ? AND manager_id = ? AND id = ?;',
