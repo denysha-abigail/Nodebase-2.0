@@ -22,6 +22,7 @@ function init() {
           'Add a role',
           'Add an employee',
           'Update an employee',
+          'Update a manager',
           'Done',
         ],
       },
@@ -49,6 +50,9 @@ function init() {
           break;
         case 'Update an employee':
           updateEmployee();
+          break;
+        case 'Update a manager':
+          updateManager();
           break;
         default:
           process.exit();
@@ -163,17 +167,21 @@ function addRole() {
 
 // add an employee; allows user to enter first name, last name, role, and reporting manager to add to database
 function addEmployee() {
+  connection.query(
+    'SELECT employee.*, role.title AS role_title FROM employee INNER JOIN role on role.id = employee.role_id;',
+    function (err, res) {
+    console.table(res);
   inquirer
     .prompt([
       {
         type: 'input',
         name: 'firstName',
-        message: "Please enter the employee\'s first name:",
+        message: "Please enter the new employee\'s first name:",
         validate: (firstNameInput) => {
           if (firstNameInput) {
             return true;
           } else {
-            console.log("Please enter the employee\'s first name!");
+            console.log("Please enter the new employee\'s first name!");
             return false;
           }
         }
@@ -181,46 +189,41 @@ function addEmployee() {
       {
         type: 'input',
         name: 'lastName',
-        message: "Please enter the employee\'s last name:",
+        message: "Please enter the new employee\'s last name:",
         validate: (lastNameInput) => {
           if (lastNameInput) {
             return true;
           } else {
-            console.log("Please enter the employee\'s last name!");
+            console.log("Please enter the new employee\'s last name!");
             return false;
           }
         }
       },
       {
-        type: 'list',
+        type: 'input',
         name: 'role',
-        message: 'Please select a role for the employee (HR Manager - 1, Brand Marketing Manager - 2, Financial Manager - 3, Senior Software Engineer - 4, Recruiter - 5, Administrative Assistant - 6, Copywriter - 7, Marketing Associate - 8, Financial Analyst - 9, Accountant - 10, Software Engineer - 11, Junior Software Engineer - 12)',
-        choices: [
-          '1',
-          '2',
-          '3',
-          '4',
-          '5',
-          '6',
-          '7',
-          '8',
-          '9',
-          '10',
-          '11',
-          '12'
-        ],
+        message: "Please choose a role_id number from the above table that corresponds to the new employee\'s role title (i.e. If new employee\'s role is HR Manager, write 1):",
+        validate: (roleInput) => {
+          if (roleInput) {
+            return true;
+          } else {
+            console.log("Please enter a role_id number from the above table!");
+            return false;
+          }
+        }
       },
       {
-        type: 'list',
+        type: 'input',
         name: 'manager',
-        message: "Please select the employee\'s manager (Alexis Burgees (Human Resources) - 1, Nathalie Cooper (Marketing) - 2, Nakamoto Hikari (Finance) - 3, Adaline Bowen (Engineering) - 4, If employee is a Manager - null)",
-        choices: [
-          '1',
-          '2',
-          '3',
-          '4',
-          'null'
-        ],
+        message: "Please enter the reporting manager\'s ID number (If new employee\'s role is a Manager position write null):",
+        validate: (managerInput) => {
+          if (managerInput) {
+            return true;
+          } else {
+            console.log("Please enter the reporting manager\'s ID number!");
+            return false;
+          }
+        }
       },
     ])
     .then(function (res) {
@@ -239,15 +242,16 @@ function addEmployee() {
           init();
         }
       );
-    });
+  });
+})
 }
 
-// update employee role; allows user to select an employee and update their existing role with a new role and add to database
+// update employee role & manager; allows user to enter an employee id and update that employee's existing role and manager with their new role and manager before adding to database
 function updateEmployee() {
     connection.query(
-    'SELECT * FROM employee;',
+    'SELECT employee.*, role.title AS role_title FROM employee INNER JOIN role on role.id = employee.role_id;',
     function (err, res) {
-      console.log(res);
+      console.table(res);
       inquirer
         .prompt([
           {
@@ -264,35 +268,30 @@ function updateEmployee() {
             }
           },
           {
-            type: 'list',
+            type: 'input',
             name: 'newRole',
-            message: "Please select the employee\'s new role (HR Manager - 1, Brand Marketing Manager - 2, Financial Manager - 3, Senior Software Engineer - 4, Recruiter - 5, Administrative Assistant - 6, Copywriter - 7, Marketing Associate - 8, Financial Analyst - 9, Accountant - 10, Software Engineer - 11, Junior Software Engineer - 12)",
-            choices: [
-              '1',
-              '2',
-              '3',
-              '4',
-              '5',
-              '6',
-              '7',
-              '8',
-              '9',
-              '10',
-              '11',
-              '12'
-            ],
+            message: "Please choose a role_id number from the above table that corresponds to the employee\'s new role title (i.e. If employee\'s new role is HR Manager, write 1):", 
+            validate: (newRoleInput) => {
+              if (newRoleInput) {
+                return true;
+              } else {
+                console.log("Please enter a role_id number from the above table!");
+                return false;
+              }
+            }
           },
           {
-            type: 'list',
+            type: 'input',
             name: 'newManager',
-            message: "Please select the employee\'s new manager (Alexis Burgees (Human Resources) - 1, Nathalie Cooper (Marketing) - 2, Nakamoto Hikari (Finance) - 3, Adaline Bowen (Engineering) - 4, If employee\'s new role is now a Manager position - null)",
-            choices: [
-              '1',
-              '2',
-              '3',
-              '4',
-              'null'
-            ],
+            message: "Please enter the new manager\'s ID number (If employee\'s new role is now a Manager position write null):",
+            validate: (newManagerInput) => {
+              if (newManagerInput) {
+                return true;
+              } else {
+                console.log("Please enter the new manager\'s ID number!");
+                return false;
+              }
+            }
           },
         ])
         .then(function (val) {
@@ -308,4 +307,53 @@ function updateEmployee() {
           );
       });
   });
+}
+
+function updateManager() {
+  connection.query(
+    'SELECT * FROM employee;',
+    function (err, res) {
+      console.log(res);
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "employeeId",
+            message: "Please enter the employee\'s ID number:",
+            validate: (employeeIdInput) => {
+              if (employeeIdInput) {
+                return true;
+              } else {
+                console.log("Please enter the employee\'s ID number!");
+                return false;
+              }
+            }
+          },
+          {
+            type: "input",
+            name: "managerId",
+            message: "Please enter the new manager\'s ID number:",
+            validate: (managerIdInput) => {
+              if (managerIdInput) {
+                return true;
+              } else {
+                console.log("Please enter the new managers\'s ID number!");
+                return false;
+              }
+            }
+          },
+        ])
+        .then(function (ans) {
+          connection.query(
+            'UPDATE employee SET manager_id = ? WHERE id = ?;',
+            [ans.managerIdInput, ans.employeeIdInput],
+            function (err) {
+              if (err) throw err;
+              console.table(ans);
+              console.log(`Employee manager successfully updated!`);
+              init();
+            }
+          );
+      });
+    });
 }
