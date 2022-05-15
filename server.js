@@ -25,6 +25,8 @@ function init() {
           'Add an employee',
           'Update an employee',
           'Update a manager',
+          'Delete a department',
+          'Delete a role',
           'Done',
         ],
       },
@@ -62,6 +64,12 @@ function init() {
         case 'Update a manager':
           updateManager();
           break;
+        case 'Delete a department':
+          deleteDepartment();
+          break;
+        case 'Delete a role':
+          deleteRole();
+          break;
         default:
           process.exit();
       }
@@ -96,8 +104,8 @@ function addDepartment() {
       name: 'name',
       type: 'input',
       message: 'What Department would you like to add?',
-      validate: (departInput) => {
-        if (departInput) {
+      validate: (departmentInput) => {
+        if (departmentInput) {
           return true;
         } else {
           console.log('Please provide a department name!');
@@ -490,7 +498,7 @@ function viewByDepartment() {
         .then(function (val) {
           connection.query(
             'SELECT employee.id, employee.first_name, employee.last_name, role.title AS role_title, department.name AS department_name FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id WHERE department.id = ?;',
-            [JSON.parse(val.viewByDepartment)],
+            [val.viewByDepartment],
             function (err, res) {
               if (err) throw err;
               console.table(res);
@@ -502,8 +510,104 @@ function viewByDepartment() {
     })
 }
 
-// * bonus - allows user to delete departments, roles, and employees *
+// * bonus - allows user to delete departments *
+// delete department; allows user to enter the department ID in order to delete it from database
+function deleteDepartment() {
+  connection.query(
+    "SELECT department.id AS department_id, department.name as department_name FROM department ORDER BY id;",
+    function (err, res) {
+      console.log('DEPARTMENTS TABLE:');
+      console.table(res);
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "deleteDepartment",
+            message: "'Please choose a department_id number from the above DEPARTMENTS TABLE to delete (i.e. Human Resources - 1):'",
+            validate: (deleteInput) => {
+              if (deleteInput) {
+                return true;
+              } else {
+                console.log("Please enter a department_id number!");
+                return false;
+              }
+            }
+          },
+        ])
+        .then(function (val) {
+          connection.query(
+            'DELETE FROM department where id = ?;',
+            [val.deleteDepartment],
+            function (err, res) {
+              if (err) throw err;
+              console.log(`Department with ID of ${val.deleteDepartment} successfully deleted!`);
+              connection.query(
+                `SELECT department.id AS department_id, department.name as department_name FROM department ORDER BY id;`,
+                function (err, res) {
+                  console.log(`NOW VIEWING ALL DEPARTMENTS AFTER DEPARTMENT WITH ID OF ${val.deleteDepartment} WAS DELETED:`);
+                  console.table(res);
+              init();
+            }
+              )}
+          );
+        });
+    })
+}
 
+
+// * bonus - allows user to delete roles *
+function deleteRole() {
+  connection.query(
+    "SELECT role.id AS role_id, role.title AS role_title FROM role;",
+    function (err, res) {
+      console.log('ROLE TABLE:');
+      console.table(res);
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "deleteRole",
+            message: "'Please choose a role_id number from the above ROLE TABLE to delete (i.e. HR Manager - 1):'",
+            validate: (deleteInput) => {
+              if (deleteInput) {
+                return true;
+              } else {
+                console.log("Please enter a role_id number!");
+                return false;
+              }
+            }
+          },
+        ])
+        .then(function (val) {
+          connection.query(
+            'DELETE FROM role where id = ?;',
+            [val.deleteRole],
+            function (err, res) {
+              if (err) throw err;
+              console.log(`Role with ID of ${val.deleteRole} successfully deleted!`);
+              connection.query(
+                `SELECT role.id AS role_id, role.title AS role_title FROM role;`,
+                function (err, res) {
+                  console.log(`NOW VIEWING ALL ROLES AFTER ROLE WITH ID OF ${val.deleteRole} WAS DELETED:`);
+                  console.table(res);
+              init();
+            }
+              )}
+          );
+        });
+    })
+}
+      // DELETE FROM role where id = 10;
+
+
+
+
+
+
+
+
+// * bonus - allows user to delete employees *
+      // DELETE FROM employee WHERE id = 9;
 
 
 // * bonus - allows user to view the total utilized budget of a department — in other words, the combined salaries of all employees in that department *
