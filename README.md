@@ -1,4 +1,4 @@
-# Nodebase 2.0
+# Nodebase 2.0 🗄
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -17,17 +17,15 @@ This server-side command-line interface application utilizes JavaScript, Node.js
 ## Installation:
 - To install, clone this repository onto your local computer, open it in your code editor, and run the following command on your terminal: ```npm install```
 
-- Before starting up the program, create a .env file at the root level of your folders with this content:
+- Before starting up the program, create a .env file at the root level of this project with the following content:
     - db_name = employees
-    - db_user = <'mysql-username-here'> (If no username set, default user for SQL is root)
-    - db_pw = <'mysql-password-here'> (If no password set, by default SQL has no password)
-
-- If no database, within mysql shell run source "db/schema.sql" then "db/seeds.sql" and then exit and start application
+    - db_user = <'mysql-username-here'> (If no username is set, default user for SQL is 'root')
+    - db_pw = <'mysql-password-here'> (If no password is set, by default SQL has no password)
 
 ## Usage:
 - Once all packages have been installed, run the mysql shell command ```mysql -u root -p``` and enter your password before running ```source db/schema.sql``` and then ```source db/seeds.sql```. Once completed, type ```exit```.
 
-- After exiting the mysql shell, Run the command ```npm start```, ```npm run start``` OR ```node server.js``` on your terminal and answer the displayed prompts as they appear. 
+- After exiting the mysql shell, run the command ```npm start```, ```npm run start``` OR ```node server.js``` on your terminal and answer the displayed prompts as they appear. 
 
 https://user-images.githubusercontent.com/96617237/168521937-f520573f-a91e-4d44-a490-38e749191ad0.mp4
 
