@@ -29,7 +29,7 @@ This server-side command-line interface application utilizes JavaScript, Node.js
 
 - After exiting the mysql shell, Run the command ```npm start```, ```npm run start``` OR ```node server.js``` on your terminal and answer the displayed prompts as they appear. 
 
-
+https://user-images.githubusercontent.com/96617237/168521937-f520573f-a91e-4d44-a490-38e749191ad0.mp4
 
 ## Preview:
 ![Screenshot](./images/nodebase_preview_screenshot.png)
