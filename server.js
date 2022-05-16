@@ -473,8 +473,8 @@ function viewByManager() {
             [JSON.parse(val.viewByManager)],
             function (err, res) {
               if (err) throw err;
+              console.log(`NOW VIEWING ALL EMPLOYEES UNDER THE MANAGER WITH AN ID OF ${val.viewByManager}:`);
               console.table(res);
-              console.log(`You selected to view all employees under the Manager with an ID of ${val.viewByManager}!`);
               init();
             }
           );
