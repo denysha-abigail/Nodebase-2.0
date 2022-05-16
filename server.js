@@ -20,6 +20,7 @@ function init() {
           'View all employees',
           'View employees by manager',
           'View employees by department',
+          'View salaries by department',
           'Add a department',
           'Add a role',
           'Add an employee',
@@ -49,6 +50,9 @@ function init() {
           break;
         case 'View employees by department':
           viewByDepartment();
+          break;
+        case 'View salaries by department':
+          viewSalaries();
           break;
         case 'Add a department':
           addDepartment();
@@ -612,6 +616,7 @@ function deleteRole() {
 
 
 // * bonus - allows user to delete employees *
+// delete an employee; allows user to enter the employee ID in order to delete him/her/them from database
 function deleteEmployee() {
   connection.query(
     "SELECT employee.id, CONCAT(employee.first_name, ' ' ,employee.last_name) AS employee_name FROM employee;",
@@ -657,6 +662,48 @@ function deleteEmployee() {
 
 
 // * bonus - allows user to view the total utilized budget of a department — in other words, the combined salaries of all employees in that department *
+function viewSalaries() {
+  connection.query(
+    "SELECT department.id AS department_id, department.name as department_name FROM department ORDER BY id;",
+    function (err, res) {
+      console.log('DEPARTMENTS TABLE:');
+      console.table(res);
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "viewSalary",
+            message: "Please choose a department_id number from the above DEPARTMENTS TABLE to view the combined salaries of all employees in that department (i.e. Human Resources - 1):",
+            validate: (departmentIdInput) => {
+              if (departmentIdInput) {
+                return true;
+              } else {
+                console.log("Please enter a department_id number!");
+                return false;
+              }
+            }
+          },
+        ])
+        .then(function (val) {
+          connection.query(
+            'SELECT department_id, SUM(salary) FROM role WHERE department_id = ? GROUP BY department_id;',
+            [val.viewSalary],
+            function (err, res) {
+              if (err) throw err;
+              console.log(`NOW VIEWING COMBINED SALARIES IN DEPARTMENT WITH ID OF ${val.viewSalary}:`);
+              console.table(res);
+              init();
+            }
+          );
+        });
+    })
+}
+
+
+// SELECT department_id, SUM(salary) FROM role WHERE department_id = 3 GROUP BY department_id;
+
+
+
 
 
 
