@@ -512,8 +512,8 @@ function viewByDepartment() {
             [val.viewByDepartment],
             function (err, res) {
               if (err) throw err;
+              console.log(`NOW VIEWING ALL EMPLOYEES UNDER THE DEPARTMENT WITH AN ID OF ${val.viewByDepartment}:`);
               console.table(res);
-              console.log(`You selected to view all employees under the Department with an ID of ${val.viewByDepartment}!`);
               init();
             }
           );
