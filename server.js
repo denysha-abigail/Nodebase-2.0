@@ -686,7 +686,7 @@ function viewSalaries() {
             [val.viewSalary],
             function (err, res) {
               if (err) throw err;
-              console.log(`NOW VIEWING COMBINED SALARIES IN DEPARTMENT WITH ID OF ${val.viewSalary}:`);
+              console.log(`NOW VIEWING COMBINED SALARIES IN THE DEPARTMENT WITH AN ID OF ${val.viewSalary}:`);
               console.table(res);
               init();
             }
