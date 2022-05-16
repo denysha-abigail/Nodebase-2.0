@@ -1,29 +1,49 @@
-AS A business owner
-I WANT to be able to view and manage the departments, roles, and employees in my company
-SO THAT I can organize and plan my business
+# Nodebase 2.0
 
-GIVEN a command-line application that accepts user input
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-WHEN I start the application
-THEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+## Description:
+This server-side command-line interface application utilizes JavaScript, Node.js, and Node Package Manager (Inquirer, MySQL2, console.table, dotenv) to view, add, update, and delete employee information in a SQL database.
 
-WHEN I choose to view all departments
-THEN I am presented with a formatted table showing department names and department ids
+## Table of Contents
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Preview](#preview)
+  - [License](#license)
+  - [Contribution](#contribution)
+  - [Questions](#questions)
+  - [Credits](#credits)
 
-WHEN I choose to view all roles
-THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
+## Installation:
+- To install, clone this repository onto your local computer, open it in your code editor, and run the following command on your terminal: ```npm install```
 
-WHEN I choose to view all employees
-THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
+- Before starting up the program, create a .env file at the root level of your folders with this content:
+    - db_name = employees
+    - db_user = <'mysql-username-here'> (If no username set, default user for SQL is root)
+    - db_pw = <'mysql-password-here'> (If no password set, by default SQL has no password)
 
-WHEN I choose to add a department
-THEN I am prompted to enter the name of the department and that department is added to the database
+- If no database, within mysql shell run source "db/schema.sql" then "db/seeds.sql" and then exit and start application
 
-WHEN I choose to add a role
-THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
+## Usage:
+- Once all packages have been installed, run the mysql shell command ```mysql -u root -p``` and enter your password before running ```source db/schema.sql``` and then ```source db/seeds.sql```. Once completed, type ```exit```.
 
-WHEN I choose to add an employee
-THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
+- After exiting the mysql shell, Run the command ```npm start```, ```npm run start``` OR ```node server.js``` on your terminal and answer the displayed prompts as they appear. 
 
-WHEN I choose to update an employee role
-THEN I am prompted to select an employee to update and their new role and this information is updated in the database
+
+
+## Preview:
+![Screenshot](./images/nodebase_preview_screenshot.png)
+
+## License:
+- This project is licensed under: [MIT](https://opensource.org/licenses/MIT)
+
+## Contribution:
+- Forking this repository is always welcomed and encouraged!
+
+> If you encounter a problem with this application, please add an issue or pull request to the GitHub repository. 
+
+## Questions:
+- Please feel free to use this application at any time and visit my personal [GitHub](https://github.com/denysha-abigail) profile to access other open source projects! 
+
+## Credits:
+- *[Denysha Guerrios-Armaiz](https://github.com/denysha-abigail), 05/2022*
