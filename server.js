@@ -495,7 +495,7 @@ function viewByDepartment() {
           {
             type: "input",
             name: "viewByDepartment",
-            message: "'Please choose a department_id number from the above DEPARTMENTS TABLE to view all employees who work for that department (i.e. Human Resources - 1):'",
+            message: "Please choose a department_id number from the above DEPARTMENTS TABLE to view all employees who work for that department (i.e. Human Resources - 1):",
             validate: (departmentInput) => {
               if (departmentInput) {
                 return true;
@@ -534,7 +534,7 @@ function deleteDepartment() {
           {
             type: "input",
             name: "deleteDepartment",
-            message: "'Please choose a department_id number from the above DEPARTMENTS TABLE to delete (i.e. Human Resources - 1):'",
+            message: "Please choose a department_id number from the above DEPARTMENTS TABLE to delete (i.e. Human Resources - 1):",
             validate: (deleteInput) => {
               if (deleteInput) {
                 return true;
@@ -579,7 +579,7 @@ function deleteRole() {
           {
             type: "input",
             name: "deleteRole",
-            message: "'Please choose a role_id number from the above ROLE TABLE to delete (i.e. HR Manager - 1):'",
+            message: "Please choose a role_id number from the above ROLE TABLE to delete (i.e. HR Manager - 1):",
             validate: (deleteInput) => {
               if (deleteInput) {
                 return true;
@@ -624,7 +624,7 @@ function deleteEmployee() {
           {
             type: "input",
             name: "deleteEmployee",
-            message: "'Please choose an employee ID number from the above EMPLOYEES TABLE to delete (i.e. Adaline Bowen - 4):'",
+            message: "Please choose an employee ID number from the above EMPLOYEES TABLE to delete (i.e. Adaline Bowen - 4):",
             validate: (deleteInput) => {
               if (deleteInput) {
                 return true;
