@@ -27,6 +27,7 @@ function init() {
           'Update a manager',
           'Delete a department',
           'Delete a role',
+          'Delete an employee',
           'Done',
         ],
       },
@@ -69,6 +70,9 @@ function init() {
           break;
         case 'Delete a role':
           deleteRole();
+          break;
+        case 'Delete an employee':
+          deleteEmployee();
           break;
         default:
           process.exit();
@@ -127,9 +131,10 @@ function addDepartment() {
           function (err, res) {
             console.log(`NOW VIEWING ALL DEPARTMENTS WITH ${val.name} INCLUDED:`);
             console.table(res);
-        init();
+            init();
+          }
+        )
       }
-        )}
     )
   })
 };
@@ -199,9 +204,10 @@ function addRole() {
                 function (err, res) {
                   console.log(`NOW VIEWING ALL ROLES WITH ${val.title} INCLUDED:`);
                   console.table(res);
-              init();
+                  init();
+                }
+              )
             }
-          )}
           );
         });
     });
@@ -291,9 +297,10 @@ function addEmployee() {
                     function (err, res) {
                       console.log(`NOW VIEWING ALL EMPLOYEES WITH ${val.firstName} ${val.lastName} INCLUDED:`);
                       console.table(res);
-                  init();
+                      init();
+                    }
+                  )
                 }
-                  )}
               );
             });
         });
@@ -366,9 +373,10 @@ function updateEmployee() {
                     function (err, res) {
                       console.log(`NOW VIEWING EMPLOYEE WITH ID OF ${val.employeeId} AFTER SUCCESSFUL ROLE AND MANAGER UPDATE:`);
                       console.table(res);
-                  init();
+                      init();
+                    }
+                  )
                 }
-                  )}
               );
             });
         });
@@ -419,14 +427,15 @@ function updateManager() {
             function (err) {
               if (err) throw err;
               console.log(`Manager for employee with ID of ${val.employeeId} successfully updated!`);
-               connection.query(
+              connection.query(
                 `SELECT employee.id, employee.first_name, employee.last_name, CONCAT(e.first_name, ' ' ,e.last_name) AS updated_manager FROM employee INNER JOIN role on role.id = employee.role_id left join employee e on employee.manager_id = e.id WHERE employee.id = ${val.employeeId};`,
                 function (err, res) {
                   console.log(`NOW VIEWING EMPLOYEE WITH ID OF ${val.employeeId} AFTER SUCCESSFUL MANAGER UPDATE:`);
                   console.table(res);
-              init();
+                  init();
+                }
+              )
             }
-          )}
           );
         });
     });
@@ -466,9 +475,9 @@ function viewByManager() {
               console.log(`You selected to view all employees under the Manager with an ID of ${val.viewByManager}!`);
               init();
             }
-        );
-    });
-  })
+          );
+        });
+    })
 }
 
 // * bonus - allows user to view employees by department *
@@ -511,7 +520,7 @@ function viewByDepartment() {
 }
 
 // * bonus - allows user to delete departments *
-// delete department; allows user to enter the department ID in order to delete it from database
+// delete a department; allows user to enter the department ID in order to delete it from database
 function deleteDepartment() {
   connection.query(
     "SELECT department.id AS department_id, department.name as department_name FROM department ORDER BY id;",
@@ -536,7 +545,7 @@ function deleteDepartment() {
         ])
         .then(function (val) {
           connection.query(
-            'DELETE FROM department where id = ?;',
+            'DELETE FROM department WHERE id = ?;',
             [val.deleteDepartment],
             function (err, res) {
               if (err) throw err;
@@ -546,9 +555,10 @@ function deleteDepartment() {
                 function (err, res) {
                   console.log(`NOW VIEWING ALL DEPARTMENTS AFTER DEPARTMENT WITH ID OF ${val.deleteDepartment} WAS DELETED:`);
                   console.table(res);
-              init();
+                  init();
+                }
+              )
             }
-              )}
           );
         });
     })
@@ -556,6 +566,7 @@ function deleteDepartment() {
 
 
 // * bonus - allows user to delete roles *
+// delete a role; allows user to enter the role ID in order to delete it from database
 function deleteRole() {
   connection.query(
     "SELECT role.id AS role_id, role.title AS role_title FROM role;",
@@ -580,7 +591,7 @@ function deleteRole() {
         ])
         .then(function (val) {
           connection.query(
-            'DELETE FROM role where id = ?;',
+            'DELETE FROM role WHERE id = ?;',
             [val.deleteRole],
             function (err, res) {
               if (err) throw err;
@@ -590,24 +601,59 @@ function deleteRole() {
                 function (err, res) {
                   console.log(`NOW VIEWING ALL ROLES AFTER ROLE WITH ID OF ${val.deleteRole} WAS DELETED:`);
                   console.table(res);
-              init();
+                  init();
+                }
+              )
             }
-              )}
           );
         });
     })
 }
-      // DELETE FROM role where id = 10;
-
-
-
-
-
-
 
 
 // * bonus - allows user to delete employees *
-      // DELETE FROM employee WHERE id = 9;
+function deleteEmployee() {
+  connection.query(
+    "SELECT employee.id, CONCAT(employee.first_name, ' ' ,employee.last_name) AS employee_name FROM employee;",
+    function (err, res) {
+      console.log('EMPLOYEES TABLE:');
+      console.table(res);
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "deleteEmployee",
+            message: "'Please choose an employee ID number from the above EMPLOYEES TABLE to delete (i.e. Adaline Bowen - 4):'",
+            validate: (deleteInput) => {
+              if (deleteInput) {
+                return true;
+              } else {
+                console.log("Please enter an employee ID number!");
+                return false;
+              }
+            }
+          },
+        ])
+        .then(function (val) {
+          connection.query(
+            'DELETE FROM employee WHERE id = ?;',
+            [val.deleteEmployee],
+            function (err, res) {
+              if (err) throw err;
+              console.log(`Employee with ID of ${val.deleteEmployee} successfully deleted!`);
+              connection.query(
+                `SELECT employee.id, CONCAT(employee.first_name, ' ' ,employee.last_name) AS employee_name FROM employee;`,
+                function (err, res) {
+                  console.log(`NOW VIEWING ALL EMPLOYEES AFTER EMPLOYEE WITH ID OF ${val.deleteEmployee} WAS DELETED:`);
+                  console.table(res);
+                  init();
+                }
+              )
+            }
+          );
+        });
+    })
+}
 
 
 // * bonus - allows user to view the total utilized budget of a department — in other words, the combined salaries of all employees in that department *
