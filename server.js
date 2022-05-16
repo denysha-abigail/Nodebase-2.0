@@ -3,17 +3,15 @@ require('console.table');
 const db = require('./db');
 const connection = require('./db/connection')
 
-// initialization function
 init();
 
 function init() {
   inquirer
     .prompt([
-      //start questions
       {
         type: 'list',
         name: 'options',
-        message: 'Which option would you like to execute?',
+        message: 'Hello! Which option would you like to execute?',
         choices: [
           'View all departments',
           'View all roles',
@@ -36,7 +34,6 @@ function init() {
     .then(function (startAnswer) {
       switch (startAnswer.options) {
         case 'View all departments':
-          //run the view departments function
           viewAllDepartments();
           break;
         case 'View all roles':
@@ -79,6 +76,7 @@ function init() {
           deleteEmployee();
           break;
         default:
+          console.log('Goodbye!');
           process.exit();
       }
     });
@@ -568,7 +566,6 @@ function deleteDepartment() {
     })
 }
 
-
 // * bonus - allows user to delete roles *
 // delete a role; allows user to enter the role ID in order to delete it from database
 function deleteRole() {
@@ -613,7 +610,6 @@ function deleteRole() {
         });
     })
 }
-
 
 // * bonus - allows user to delete employees *
 // delete an employee; allows user to enter the employee ID in order to delete him/her/them from database
@@ -660,8 +656,8 @@ function deleteEmployee() {
     })
 }
 
-
 // * bonus - allows user to view the total utilized budget of a department — in other words, the combined salaries of all employees in that department *
+// view combined salaries; allows user to enter the department ID to view combined salaries of all employees in that department
 function viewSalaries() {
   connection.query(
     "SELECT department.id AS department_id, department.name as department_name FROM department ORDER BY id;",
@@ -686,7 +682,7 @@ function viewSalaries() {
         ])
         .then(function (val) {
           connection.query(
-            'SELECT department_id, SUM(salary) FROM role WHERE department_id = ? GROUP BY department_id;',
+            'SELECT department_id, SUM(salary) AS combined_salary FROM role WHERE department_id = ? GROUP BY department_id;',
             [val.viewSalary],
             function (err, res) {
               if (err) throw err;
@@ -698,13 +694,3 @@ function viewSalaries() {
         });
     })
 }
-
-
-// SELECT department_id, SUM(salary) FROM role WHERE department_id = 3 GROUP BY department_id;
-
-
-
-
-
-
-
